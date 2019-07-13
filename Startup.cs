@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using Book_library.Models;
 
 namespace Book_library
 {
@@ -33,6 +35,9 @@ namespace Book_library
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddDbContext<Book_libraryContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("Book_libraryContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
