@@ -13,6 +13,6 @@ namespace Book_library.Models
         {
         }
 
-        public DbSet<Book_library.Models.Book> Book { get; set; }
+        public DbSet<Book> Book { get; set; }
     }
 }
