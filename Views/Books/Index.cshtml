@@ -6,9 +6,19 @@
 
 @*<h1>Index</h1>*@
 
+
+<h4 class="text-center">Books list</h4>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Add New Book</a>
 </p>
+
+<form asp-controller="Books" asp-action="Index">
+    <p>
+        Title: <input type="text" name="searchString">
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>

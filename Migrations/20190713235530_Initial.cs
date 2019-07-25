@@ -26,8 +26,7 @@ namespace Book_library.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Book");
+            migrationBuilder.DropTable(name: "Book");
         }
     }
 }
