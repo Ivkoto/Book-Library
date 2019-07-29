@@ -31,6 +31,14 @@ namespace Book_library.Controllers
             return View(await books.ToListAsync());
         }
 
+        //test code
+        [HttpPost]
+        public string Index(string searchString, bool notUsed)
+        {
+            return "From [HttpPost]Index: filter on " + searchString;
+        }
+        //end test code
+
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
         {
