@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Book_library.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Book_library.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Book_library.Controllers
 {
@@ -18,26 +18,56 @@ namespace Book_library.Controllers
             this.context = context;
         }
 
+        //// GET: Books
+        //public async Task<IActionResult> Index(string searchString)
+        //{
+        //    var books = from b in context.Book select b;
+
+        //    if (!String.IsNullOrEmpty(searchString))
+        //    {
+        //        books = books.Where(b =>b.Title.Contains(searchString));
+        //    }
+
+        //    return View(await books.ToListAsync());
+        //}
+
         // GET: Books
-        public async Task<IActionResult> Index(string searchString)
+        public async Task<IActionResult> Index(string bookGenre, string searchString)
         {
+            IQueryable<string> genreQuery = from b in context.Book
+                                            orderby b.Genre
+                                            select b.Genre;
+
             var books = from b in context.Book select b;
 
             if (!String.IsNullOrEmpty(searchString))
             {
-                books = books.Where(b =>b.Title.Contains(searchString));
+                books = books.Where(b => b.Title.Contains(searchString));
             }
 
-            return View(await books.ToListAsync());
+            if (!string.IsNullOrEmpty(bookGenre))
+            {
+                books = books.Where(b => b.Genre == bookGenre);
+            }
+
+            var bookGenreVM = new BookGenreViewModel
+            {
+                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+                Books = await books.ToListAsync()
+            };
+
+            return View(bookGenreVM);
         }
 
-        //test code
+
+        //begining of test code
         [HttpPost]
         public string Index(string searchString, bool notUsed)
         {
             return "From [HttpPost]Index: filter on " + searchString;
         }
-        //end test code
+        //end of test code
+
 
         // GET: Books/Details/5
         public async Task<IActionResult> Details(int? id)
