@@ -18,7 +18,12 @@ namespace Book_library.Controllers
             this.context = context;
         }
 
-        //// GET: Books
+        public enum HeaderElemnts
+        {
+            Title, Author, Genre, SharedWith
+        }
+
+        //// GET: Books by primary Title filter
         //public async Task<IActionResult> Index(string searchString)
         //{
         //    var books = from b in context.Book select b;
@@ -30,33 +35,70 @@ namespace Book_library.Controllers
 
         //    return View(await books.ToListAsync());
         //}
+        
 
-        // GET: Books
-        public async Task<IActionResult> Index(string bookGenre, string searchString)
+        // GET: Books by Genre
+        //public async Task<IActionResult> Index(string bookGenre, string searchString)
+        //{
+        //    IQueryable<string> genreQuery = from b in context.Book
+        //                                    orderby b.Genre
+        //                                    select b.Genre;
+
+        //    var books = from b in context.Book select b;
+
+        //    if (!String.IsNullOrEmpty(searchString))
+        //    {
+        //        books = books.Where(b => b.Title.Contains(searchString));
+        //    }
+
+        //    if (!string.IsNullOrEmpty(bookGenre))
+        //    {
+        //        books = books.Where(b => b.Genre == bookGenre);
+        //    }
+
+        //    var bookGenreVM = new BookGenreViewModel
+        //    {
+        //        Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
+        //        Books = await books.ToListAsync()
+        //    };
+
+        //    return View(bookGenreVM);
+        //}
+
+        //Get Books by selected header type
+        public async Task<IActionResult> Index(string headerType, string searchString)
         {
-            IQueryable<string> genreQuery = from b in context.Book
-                                            orderby b.Genre
-                                            select b.Genre;
-
             var books = from b in context.Book select b;
 
-            if (!String.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(headerType))
             {
-                books = books.Where(b => b.Title.Contains(searchString));
+
+                switch (headerType)
+                {
+                    case "Title":
+                        books = books.Where(b => b.Title.Contains(searchString));
+                        break;
+                    case "Author":
+                        books = books.Where(b => b.Author.Contains(searchString));
+                        break;
+                    case "Genre":
+                        books = books.Where(b => b.Genre.Contains(searchString));
+                        break;
+                    case "SharedWith":
+                        books = books.Where(b => b.SharedWith.Contains(searchString));
+                        break;
+                    default:
+                        break;
+                }
             }
 
-            if (!string.IsNullOrEmpty(bookGenre))
+            var searchVM = new SearchViewModel
             {
-                books = books.Where(b => b.Genre == bookGenre);
-            }
-
-            var bookGenreVM = new BookGenreViewModel
-            {
-                Genres = new SelectList(await genreQuery.Distinct().ToListAsync()),
-                Books = await books.ToListAsync()
+                Books = await books.ToListAsync(),
+                HeaderElements = new SelectList(Enum.GetValues(typeof(HeaderElemnts)).Cast<HeaderElemnts>())
             };
 
-            return View(bookGenreVM);
+            return View(searchVM);
         }
 
 

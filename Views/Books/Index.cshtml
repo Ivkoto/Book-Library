@@ -1,5 +1,6 @@
 ﻿@*@model IEnumerable<Book_library.Models.Book>*@
-@model Book_library.Models.BookGenreViewModel
+@*@model Book_library.Models.BookGenreViewModel*@
+@model Book_library.Models.SearchViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -13,6 +14,7 @@
     <a asp-action="Create">Add New Book</a>
 </p>
 
+@*primary filter by Title*@
 @*<form asp-controller="Books" asp-action="Index" method="get">
     <p>
         Title: <input type="text" name="searchString">
@@ -20,7 +22,8 @@
     </p>
 </form>*@
 
-<form asp-controller="Books" asp-action="Index" method="get">
+@*get Genre selection field*@
+@*<form asp-controller="Books" asp-action="Index" method="get">
     <p>
         <select asp-for="BookGenre" asp-items="Model.Genres">
             <option value="">All</option>
@@ -29,7 +32,18 @@
         Title: <input type="text" name="searchString">
         <input type="submit" value="Filter" />
     </p>
+</form>*@
+
+@*Filter by selected header type *@
+<form>
+    <p>
+        <select asp-for="HeaderType" asp-items="Model.HeaderElements" style="height: 28px">
+        </select>
+        <input type="text" name="searchString" style="height: 28px">
+        <input type="submit" value="Filter" style="height: 29px" />
+    </p>
 </form>
+
 
 @*<table class="table">
     <thead>
