@@ -37,9 +37,9 @@
 @*Filter by selected header type *@
 <form>
     <p>
-        <select asp-for="HeaderType" asp-items="Model.HeaderElements" style="height: 28px">
+        <select asp-for="HeaderType" asp-items="Model.HeaderElements" style="height: 29px">
         </select>
-        <input type="text" name="searchString" style="height: 28px">
+        <input type="text" name="searchString" style="height: 29px">
         <input type="submit" value="Filter" style="height: 29px" />
         <input type="submit" value="Reset" onclick="location.href = '@Url.Action("Index", "Books")'; return false;" style="height: 29px" />
     </p>
