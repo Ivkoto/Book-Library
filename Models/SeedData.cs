@@ -24,14 +24,16 @@ namespace Book_library.Models
                         Title = "test title",
                         Author = "Test Author",
                         Genre = "test genre",
-                        SharedWith = "non"
+                        SharedWith = "non",
+                        Pages = 150
                     },
                     new Book
                     {
                         Title = "test2 title",
                         Author = "Test2 Author",
                         Genre = "test2 genre",
-                        SharedWith = "someone"
+                        SharedWith = "someone",
+                        Pages = 200
                     }
                 );
 

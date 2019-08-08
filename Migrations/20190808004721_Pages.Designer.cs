@@ -3,14 +3,16 @@ using Book_library.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Book_library.Migrations
 {
     [DbContext(typeof(Book_libraryContext))]
-    partial class Book_libraryContextModelSnapshot : ModelSnapshot
+    [Migration("20190808004721_Pages")]
+    partial class Pages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

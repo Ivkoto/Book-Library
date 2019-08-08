@@ -20,7 +20,7 @@ namespace Book_library.Controllers
 
         public enum HeaderElemnts
         {
-            Title, Author, Genre, SharedWith
+            Title, Author, Genre, SharedWith, Pages
         }
 
         //// GET: Books by primary Title filter
@@ -87,6 +87,9 @@ namespace Book_library.Controllers
                     case "SharedWith":
                         books = books.Where(b => b.SharedWith.Contains(searchString));
                         break;
+                    case "Pages":
+                        books = books.Where(b => b.Pages == int.Parse(searchString));
+                        break;
                     default:
                         break;
                 }
@@ -140,7 +143,7 @@ namespace Book_library.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Author,Genre,SharedWith")] Book book)
+        public async Task<IActionResult> Create([Bind("Id,Title,Author,Genre,SharedWith,Pages")] Book book)
         {
             if (ModelState.IsValid)
             {
@@ -172,7 +175,7 @@ namespace Book_library.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Author,Genre,SharedWith")] Book book)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Author,Genre,SharedWith,Pages")] Book book)
         {
             if (id != book.Id)
             {
