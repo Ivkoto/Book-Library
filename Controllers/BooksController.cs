@@ -16,12 +16,7 @@ namespace Book_library.Controllers
         public BooksController(Book_libraryContext context)
         {
             this.context = context;
-        }
-
-        public enum HeaderElemnts
-        {
-            Title, Author, Genre, SharedWith, Pages
-        }
+        }        
 
         //// GET: Books by primary Title filter
         //public async Task<IActionResult> Index(string searchString)
@@ -98,7 +93,7 @@ namespace Book_library.Controllers
             var searchVM = new SearchViewModel
             {
                 Books = await books.ToListAsync(),
-                HeaderElements = new SelectList(Enum.GetValues(typeof(HeaderElemnts)).Cast<HeaderElemnts>())
+                HeaderElements = new SelectList(Enum.GetValues(typeof(HeaderElements)).Cast<HeaderElements>())
             };
 
             return View(searchVM);
