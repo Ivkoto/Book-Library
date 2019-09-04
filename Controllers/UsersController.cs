@@ -1,8 +1,11 @@
 ﻿using Book_library.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Book_library.Security;
+using Microsoft.AspNetCore.Http;
 
 namespace Book_library.Controllers
 {
@@ -39,22 +42,35 @@ namespace Book_library.Controllers
             //Model Validation
             if (ModelState.IsValid)
             {
+                
                 //Email is already exist
+                var isExist = IsEmailExist(user.Email);
+                if (isExist)
+                {
+                    ModelState.AddModelError("EmailExist", "Email already exist!");
+                    return View(user);
+                }
+
+                //Generate Activation Code
+                user.ActivationCode = Guid.NewGuid();
+
+                //Password Hashing
+                user.Password = Crypto.Hash(user.Password);
+                user.ConfirmPassword = Crypto.Hash(user.ConfirmPassword);
+
+                user.IsEmailVerified = false;
+
+                //Save data to Database
+                context.User.Add(user);
+                context.SaveChanges();
+
+                //Send Email to User
+                SendVerificationLinkEmail(user.Email, user.ActivationCode.ToString());
             }
             else
             {
                 message = "Invalid Request";
-            }
-
-
-
-            //Generate Activation Code
-
-            //Password Hashing
-
-            //Save data to Database
-
-            //Send Email to User
+            }            
 
             return View(user);
         }
@@ -79,6 +95,13 @@ namespace Book_library.Controllers
             var curUser = context.User.Where(u => u.Email == email).FirstOrDefault();
 
             return curUser == null ? false : true;
+        }
+
+        [NonAction]
+        public void SendVerificationLinkEmail(string email, string activationCode)
+        {
+            var verifyUrl = "User/VerifyAccount/" + activationCode;
+            //TODO
         }
 
 
