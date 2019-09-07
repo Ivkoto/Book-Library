@@ -1,11 +1,13 @@
 ﻿using Book_library.Models;
+using Book_library.Security;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Threading.Tasks;
-using Book_library.Security;
-using Microsoft.AspNetCore.Http;
 
 namespace Book_library.Controllers
 {
@@ -42,7 +44,7 @@ namespace Book_library.Controllers
             //Model Validation
             if (ModelState.IsValid)
             {
-                
+
                 //Email is already exist
                 var isExist = IsEmailExist(user.Email);
                 if (isExist)
@@ -66,12 +68,15 @@ namespace Book_library.Controllers
 
                 //Send Email to User
                 SendVerificationLinkEmail(user.Email, user.ActivationCode.ToString());
+                message = "Registration was successful! Activation link has been sent to your e-mail address: " + user.Email;
+                status = true;
             }
             else
             {
                 message = "Invalid Request";
-            }            
-
+            }
+            ViewBag.Message = message;
+            ViewBag.Status = status;
             return View(user);
         }
 
@@ -100,8 +105,36 @@ namespace Book_library.Controllers
         [NonAction]
         public void SendVerificationLinkEmail(string email, string activationCode)
         {
-            var verifyUrl = "User/VerifyAccount/" + activationCode;
-            //TODO
+            var verifyUrl = "Users/VerifyAccount/" + activationCode;
+            var link = Request.GetDisplayUrl().Replace(Request.GetDisplayUrl(), verifyUrl);
+
+            var fromEmail = new MailAddress("ikostov87@gmail.com", "Admin verification");
+            var toEmail = new MailAddress(email);
+            var fromEmailPassword = "********"; //replace with actual password
+            string subject = "Your account is successfully created!";
+
+            string body = "<br/><br/> Your account was successfully created. Please click on the link below to verify your account" +
+                "<br/><br/><a href = " + link + ">" + link + "</a>";
+
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+            };
+
+            var message = new MailMessage(fromEmail, toEmail)
+            {
+                Subject = subject,
+                Body = body,
+                IsBodyHtml = true
+            };
+
+            //TODO some error with security conection...?
+            smtp.Send(message);
         }
 
 
