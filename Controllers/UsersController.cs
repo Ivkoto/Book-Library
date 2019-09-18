@@ -41,7 +41,6 @@ namespace Book_library.Controllers
             bool status = false;
             string message = "";
 
-            //Model Validation
             if (ModelState.IsValid)
             {
 
@@ -105,25 +104,25 @@ namespace Book_library.Controllers
         [NonAction]
         public void SendVerificationLinkEmail(string email, string activationCode)
         {
-            var verifyUrl = "Users/VerifyAccount/" + activationCode;
+            var verifyUrl = Request.GetDisplayUrl() + "Users/VerifyAccount/" + activationCode;
             var link = Request.GetDisplayUrl().Replace(Request.GetDisplayUrl(), verifyUrl);
 
-            var fromEmail = new MailAddress("ikostov87@gmail.com", "Admin verification");
+            var fromEmail = new MailAddress("ikostov87@gmail.com", "Admin verification");            
             var toEmail = new MailAddress(email);
-            var fromEmailPassword = "********"; //replace with actual password
+            var fromEmailPassword = "mnrvzjabgczytrdt"; //token code
             string subject = "Your account is successfully created!";
 
-            string body = "<br/><br/> Your account was successfully created. Please click on the link below to verify your account" +
+            string body = "<br/><br/> Your account was successfully created. Please click on the link below to verify your account:" +
                 "<br/><br/><a href = " + link + ">" + link + "</a>";
 
             var smtp = new SmtpClient
             {
                 Host = "smtp.gmail.com",
                 Port = 587,
-                EnableSsl = true,
+                EnableSsl = true,                
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)                
             };
 
             var message = new MailMessage(fromEmail, toEmail)
