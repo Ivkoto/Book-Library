@@ -66,7 +66,7 @@ namespace Book_library.Controllers
                 context.SaveChanges();
 
                 //Send Email to User
-                SendVerificationLinkEmail(user.Email, user.ActivationCode.ToString());
+                SendVerificationLinkEmail(user.Email, user.ActivationCode.ToString(), user);
                 message = "Registration was successful! Activation link has been sent to your e-mail address: " + user.Email;
                 status = true;
             }
@@ -102,27 +102,28 @@ namespace Book_library.Controllers
         }
 
         [NonAction]
-        public void SendVerificationLinkEmail(string email, string activationCode)
+        public void SendVerificationLinkEmail(string email, string activationCode, User user)
         {
             var verifyUrl = Request.GetDisplayUrl() + "Users/VerifyAccount/" + activationCode;
             var link = Request.GetDisplayUrl().Replace(Request.GetDisplayUrl(), verifyUrl);
 
-            var fromEmail = new MailAddress("ikostov87@gmail.com", "Admin verification");            
+            var fromEmail = new MailAddress("ikostov87@gmail.com", "Admin verification");
             var toEmail = new MailAddress(email);
             var fromEmailPassword = "mnrvzjabgczytrdt"; //token code
             string subject = "Your account is successfully created!";
 
-            string body = "<br/><br/> Your account was successfully created. Please click on the link below to verify your account:" +
+            string body = "<br/><br/> Hello, " + user.FirstName + " "+user.LastName+"" + 
+                "<br/>Your account was successfully created. Please click on the link below to verify your account:" +
                 "<br/><br/><a href = " + link + ">" + link + "</a>";
 
             var smtp = new SmtpClient
             {
                 Host = "smtp.gmail.com",
                 Port = 587,
-                EnableSsl = true,                
+                EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)                
+                Credentials = new NetworkCredential(fromEmail.Address, fromEmailPassword)
             };
 
             var message = new MailMessage(fromEmail, toEmail)
