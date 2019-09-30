@@ -2,7 +2,9 @@
 using Book_library.Security;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication;
 using System;
 using System.Linq;
 using System.Net;
@@ -118,8 +120,10 @@ namespace Book_library.Controllers
             {
                 if (string.Compare(Crypto.Hash(loginUser.Password), curUser.Password) == 0)
                 {
-                    int timeout = loginUser.RememberMe ? 525600 : 1; //525600 = 1 year
-                    //var ticket = new 
+                    int timeout = loginUser.RememberMe ? 525600 : 30; //525600min = 1 year
+                    
+                    //TO DO
+                    //var ticket = new AuthenticationTicket()
                 }
                 else
                 {
