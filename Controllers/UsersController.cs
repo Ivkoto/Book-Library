@@ -79,17 +79,61 @@ namespace Book_library.Controllers
             return View(user);
         }
 
-        //Verify Email
+        //Verify Account
+        public ActionResult VerifyAccount(string id)
+        {
+            bool status = false;
 
-
-        //Verify Email LINK
-
+            var u = context.User.Where(uac => uac.ActivationCode == new Guid(id)).FirstOrDefault();
+            if (u != null)
+            {
+                u.IsEmailVerified = true;
+                context.SaveChanges();
+                status = true;
+            }
+            else
+            {
+                ViewBag.Message = "Invalid request";
+            }
+            ViewBag.Status = status;
+            return View();
+        }
 
         //Login
-
+        [HttpGet]
+        public ActionResult Login()
+        {
+            return View();
+        }
 
         //Login POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Login(UserLogin loginUser)
+        {
+            string message = "";
 
+            var curUser = context.User.Where(u => u.Email == loginUser.Email).FirstOrDefault();
+            if (curUser != null)
+            {
+                if (string.Compare(Crypto.Hash(loginUser.Password), curUser.Password) == 0)
+                {
+                    int timeout = loginUser.RememberMe ? 525600 : 1; //525600 = 1 year
+                    //var ticket = new 
+                }
+                else
+                {
+                    message = "Invalid user password!";
+                }
+            }
+            else
+            {
+                message = "Invalid user email adress!";
+            }
+
+            ViewBag.Message = message;
+            return View();
+        }
 
         //Logout
 
@@ -104,7 +148,8 @@ namespace Book_library.Controllers
         [NonAction]
         public void SendVerificationLinkEmail(string email, string activationCode, User user)
         {
-            var verifyUrl = Request.GetDisplayUrl() + "Users/VerifyAccount/" + activationCode;
+            var verifyUrl = Request.GetDisplayUrl().Replace("Registration", "") + "VerifyAccount/" + activationCode;
+                        
             var link = Request.GetDisplayUrl().Replace(Request.GetDisplayUrl(), verifyUrl);
 
             var fromEmail = new MailAddress("ikostov87@gmail.com", "Admin verification");
@@ -112,7 +157,7 @@ namespace Book_library.Controllers
             var fromEmailPassword = "mnrvzjabgczytrdt"; //token code
             string subject = "Your account is successfully created!";
 
-            string body = "<br/><br/> Hello, " + user.FirstName + " "+user.LastName+"" + 
+            string body = "<br/><br/> Hello, " + user.FirstName + " " + user.LastName + "" +
                 "<br/>Your account was successfully created. Please click on the link below to verify your account:" +
                 "<br/><br/><a href = " + link + ">" + link + "</a>";
 
@@ -133,7 +178,6 @@ namespace Book_library.Controllers
                 IsBodyHtml = true
             };
 
-            //TODO some error with security conection...?
             smtp.Send(message);
         }
 
@@ -141,7 +185,7 @@ namespace Book_library.Controllers
 
 
 
-        //AUTO GENERATE CODE:
+        #region AUTO GENERATE CODE:
 
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -168,8 +212,6 @@ namespace Book_library.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("UserID,FirstName,LastName,Email,DateOfBirth,Password,ConfirmPassword,IsEmailVerified,ActivationCode")] User user)
@@ -200,8 +242,6 @@ namespace Book_library.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("UserID,FirstName,LastName,Email,DateOfBirth,Password,ConfirmPassword,IsEmailVerified,ActivationCode")] User user)
@@ -267,5 +307,7 @@ namespace Book_library.Controllers
         {
             return context.User.Any(e => e.UserID == id);
         }
+
+        #endregion
     }
 }

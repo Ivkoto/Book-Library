@@ -17,5 +17,7 @@ namespace Book_library.Models
         public DbSet<Book> Book { get; set; }
 
         public DbSet<Book_library.Models.User> User { get; set; }
+
+        public DbSet<Book_library.Models.UserLogin> UserLogin { get; set; }
     }
 }
